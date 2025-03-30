@@ -1,5 +1,5 @@
 import numpy as np
-from hands import mp_hands, tracked_landmark_roots, tracked_landmarks
+from hands import mp_hands, tracked_landmark_roots, tracked_landmarks, get_landmark
 
 def calculate_angle(a, b, c):
   """Computes the angle (in degrees) between screen point vectors AB and BC"""

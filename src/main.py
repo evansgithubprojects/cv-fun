@@ -8,7 +8,7 @@ import json
 from get_hand_angles import get_hand_angles
 from get_hand_distances import get_hand_distances
 from check_pose import check_pose
-from hands import mp_hands, hands
+from hands import mp_hands, hands, get_landmark
 from deserialize_poses import deserialize_poses
 import psutil
 import sys
@@ -59,7 +59,7 @@ def take_snapshot(multi_hand_landmarks):
   if not serialized_hands:
     return None
 
-  with open("poses/crip.json", "w") as file:
+  with open("poses/west side.json", "w") as file:
     json.dump(serialized_hands, file, indent=2)
 
 last_loop_time = time.perf_counter()
@@ -93,18 +93,38 @@ while True:
   elif state == State.MATCHING_POSE:
     if results.multi_hand_landmarks is not None:
       for hand_landmarks in results.multi_hand_landmarks:
-        angles = get_hand_angles(hand_landmarks)
-        distances = get_hand_distances(hand_landmarks)
-        for connection_name, distance in distances.items():
-          index = mp_hands.HandLandmark[connection_name.split('-')[0] + '_TIP']
-          landmark = hand_landmarks.landmark[index]
         matched_pose_name = None
         for pose_name, data in pose_data.items():
-          matched = check_pose(data, angles, results)
+          matched, error = check_pose(data, results)
           if matched:
             matched_pose_name = pose_name
             status_text = f'throwing up {pose_name}'
             break
+          else:
+            for handIndex, hand_pose_data in data.items():
+              if handIndex in results.multi_hand_landmarks: break
+              angles = hand_pose_data['angles']
+              for finger_name, finger_angles in angles.items():
+                for i, (landmark_name, angle) in enumerate(finger_angles.items()):
+                  angle_start_landmark = get_landmark(landmark_name, hand_landmarks)
+                  landmark = get_landmark(landmark_name, hand_landmarks)
+                  
+                  #cv2.circle()
+          #elif error:
+            #if error['type'] == 'distance':
+              #connected_landmarks = error['landmarks']
+              #cv2.line(
+               # frame,
+                #screen.get_pixel_coordinates(unpack_landmark_position(connected_landmarks[0])),
+                #screen.get_pixel_coordinates(unpack_landmark_position(connected_landmarks[1])),
+                #(0, 255, 0),
+                #2
+              #)
+              #distance error
+              #print('distance error')
+            #else:
+              #angle error
+              #print('angle error')
         drawing_spec = mp_drawing.DrawingSpec(
           color=(0, 255, 0) if matched_pose_name else (0, 0, 255),
           thickness=2,

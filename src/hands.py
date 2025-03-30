@@ -14,3 +14,12 @@ all_landmarks = [landmark for landmark in dir(mp_hands.HandLandmark) if landmark
 tracked_landmarks = {}
 for root_name in tracked_landmark_roots:
   tracked_landmarks[root_name] = [landmark for landmark in all_landmarks if root_name in landmark]
+
+def get_landmark(landmark_name, hand_landmarks):
+  return hand_landmarks.landmark[mp_hands.HandLandmark[landmark_name]]
+
+def unpack_landmark_position(landmark):
+  return (landmark.x, landmark.y)
+
+#def get_parent_landmark(landmark_name):
+  #return track

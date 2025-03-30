@@ -2,7 +2,7 @@ import json
 
 pose_names = [
   'blood',
-  #'crip',
+  'crip',
   'west side'
 ]
 
@@ -10,7 +10,7 @@ def deserialize_poses():
   pose_data = {}
   for pose_name in pose_names:
     try:
-      with open(f'poses/{pose_name}.json', "r") as poseFile:
+      with open(f'poses/{pose_name}.json', 'r') as poseFile:
         deserialized = None
         try:
           deserialized = json.loads(poseFile.read())
@@ -19,8 +19,7 @@ def deserialize_poses():
           print(error)
           return
 
-        if deserialized:
-            pose_data[pose_name] = deserialized
+        pose_data[pose_name] = deserialized
     except OSError as error:
       print('Failed to open pose file: ')
       print(error)
